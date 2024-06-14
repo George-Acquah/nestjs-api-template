@@ -6,6 +6,7 @@ import { AuthModule } from './routes/auth/auth.module';
 import { UsersModule } from './routes/users/users.module';
 import { RootMongooseModule } from './modules/mongo.module';
 import { MailModule } from './routes/mail/mail.module';
+import { AccountVerificationModule } from './routes/verify-account/verify-account.module';
 
 @Module({
   imports: [
@@ -13,7 +14,8 @@ import { MailModule } from './routes/mail/mail.module';
     RootMongooseModule,
     AuthModule,
     UsersModule,
-    MailModule
+    MailModule,
+    AccountVerificationModule
   ],
   controllers: [AppController],
   providers: [AppService]

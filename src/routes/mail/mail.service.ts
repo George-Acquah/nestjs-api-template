@@ -1,16 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { InjectModel } from '@nestjs/mongoose';
-import { randomBytes } from 'crypto';
 import { MailtrapClient } from 'mailtrap';
-import { Model } from 'mongoose';
 import { mailtrapConfigKey } from 'src/shared/constants/mail.constants';
 import {
   _IMailConfig,
   _IMailRecipient,
   _IMailSender
 } from 'src/shared/interfaces/mail.interface';
-import { _IDbAccountVerification } from 'src/shared/interfaces/users.interface';
 
 /**
  * MailService Class
@@ -54,30 +50,18 @@ export class MailService {
   private ACCOUNT_ID: number;
   private SENDER_EMAIL: string;
   private SENDER_NAME: string;
-  private RECIPIENT_EMAIL: string;
 
   /**
    * Constructor
    *
    * @param {ConfigService} configService - Service to access environment-specific configuration.
    */
-  constructor(
-    @InjectModel('AccountVerification')
-    private accountVerificationModel: Model<_IDbAccountVerification>,
-    private readonly configService: ConfigService
-  ) {
+  constructor(private readonly configService: ConfigService) {
     // Extract Mailtrap configuration from the environment variables using the ConfigService.
-    const {
-      token,
-      sender_email,
-      sender_name,
-      recipient_email,
-      test_id,
-      account_id
-    } = this.configService.get<_IMailConfig>(mailtrapConfigKey);
+    const { token, sender_email, sender_name, test_id, account_id } =
+      this.configService.get<_IMailConfig>(mailtrapConfigKey);
 
     // Initialize class properties with the extracted configuration values.
-    this.RECIPIENT_EMAIL = recipient_email;
     this.SENDER_EMAIL = sender_email;
     this.SENDER_NAME = sender_name;
     this.MAIL_TOKEN = token;
@@ -98,19 +82,6 @@ export class MailService {
     };
   }
 
-  async findAccountVerificationRecord(token: string, email: string) {
-    return await this.accountVerificationModel.findOne({
-      verification_token: token,
-      email
-    });
-  }
-
-  async deleteAccountVerificationRecord(_id: any) {
-    await this.accountVerificationModel.deleteOne({
-      _id
-    });
-  }
-
   /**
    * verifyAccountToken Method
    *
@@ -123,18 +94,12 @@ export class MailService {
    * @param userName - The name of the user to be included in the email.
    * @param verificationLink - The unique link for the user to verify their account.
    */
-  async verifyAccountToken(email: string, userName: string) {
+  async sendAccountVerificationToken(
+    email: string,
+    userName: string,
+    verificationToken: string
+  ) {
     try {
-      // Generate a secure verification token
-      const verificationToken = randomBytes(16).toString('hex');
-
-      // Save the verification token and email to the AccountVerification collection
-      const accountVerification = new this.accountVerificationModel({
-        verificationToken,
-        email
-      });
-      await accountVerification.save();
-
       // Construct the verification link
       const verificationLink = `https://yourapp.com/verify?token=${verificationToken}`;
 
@@ -159,8 +124,7 @@ export class MailService {
 
       console.log('Email sent successfully:', response); // Log success message
       return {
-        message: 'Verification email sent successfully.',
-        verificationToken: verificationToken // Optionally return the token for further use or logging
+        message: 'Verification email sent successfully.'
       };
     } catch (error) {
       console.error('Error in verifyAccountToken:', error); // Log any errors that occur

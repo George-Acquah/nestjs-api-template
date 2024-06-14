@@ -15,14 +15,14 @@ import { compare } from 'bcrypt';
 import { sanitizeLoginUserFn } from 'src/shared/helpers/users.sanitizers';
 import { LoginUserDto } from 'src/shared/dtos/users/login-users.dtos';
 import { getExpirationTime } from 'src/shared/utils/users.utils';
-import { MailService } from '../mail/mail.service';
+import { AccountVerificationService } from '../verify-account/verify-account.service';
 
 @Injectable()
 export class AuthService {
   private logger = new Logger(AuthService.name);
   constructor(
     private userService: UsersService,
-    private readonly mailService: MailService
+    private accountVerificationService: AccountVerificationService
   ) {}
   async signPayload(payload: _IPayload, secret: string, exp: string) {
     return sign(payload, secret, { expiresIn: exp });
@@ -52,7 +52,10 @@ export class AuthService {
     try {
       // Fetch the verification record from the database using the token and email
       const verificationRecord =
-        await this.mailService.findAccountVerificationRecord(token, email);
+        await this.accountVerificationService.findAccountVerificationRecord(
+          token,
+          email
+        );
 
       if (!verificationRecord) {
         throw new NotFoundException(
@@ -76,7 +79,7 @@ export class AuthService {
       await user.save();
 
       // Optionally remove the verification record to clean up
-      await this.mailService.deleteAccountVerificationRecord(
+      await this.accountVerificationService.deleteAccountVerificationRecord(
         verificationRecord._id
       );
 

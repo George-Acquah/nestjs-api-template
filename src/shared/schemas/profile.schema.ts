@@ -38,7 +38,13 @@ export class Profile {
   @Prop({ required: false, type: String, default: null })
   pinCode: string;
 
-  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User', required: true })
+  @Prop({
+    type: MongooseSchema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+    unique: true,
+    index: true
+  })
   user: User;
 }
 

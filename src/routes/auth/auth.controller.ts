@@ -7,6 +7,7 @@ import { RefreshJwtAuthGuard } from 'src/shared/guards/refreshJwt.guard';
 import { ApiResponse } from 'src/shared/res/api.response';
 import { User } from 'src/shared/decorators/user.decorator';
 import { UsersService } from '../users/users.service';
+import { AccountVerificationService } from '../verify-account/verify-account.service';
 // import { LocalJwtAuthGuard } from 'src/shared/guards/local-jwt.guard';
 
 @Controller('auth')
@@ -14,7 +15,8 @@ export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly userService: UsersService,
-    private readonly mailService: MailService
+    private readonly mailService: MailService,
+    private readonly accountVerificationService: AccountVerificationService
   ) {}
   @Post('users/register')
   async registerUser(@Body() data: CreateUserDto) {
@@ -33,7 +35,15 @@ export class AuthController {
       const { _id, ...user } = result;
       console.log(_id);
 
-      await this.mailService.verifyAccountToken(user.email, 'some-user-name');
+      const verificationToken =
+        await this.accountVerificationService.createVerificationToken(
+          user.email
+        );
+      await this.mailService.sendAccountVerificationToken(
+        user.email,
+        'some-user-name',
+        verificationToken
+      );
 
       return new ApiResponse(
         200,
