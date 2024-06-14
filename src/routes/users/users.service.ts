@@ -34,7 +34,7 @@ export class UsersService {
         return user;
       }
     } catch (error) {
-      throw new Error(error.message);
+      throw error;
     }
   }
 

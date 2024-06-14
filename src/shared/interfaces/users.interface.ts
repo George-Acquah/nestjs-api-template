@@ -1,5 +1,4 @@
 import { Document } from 'mongoose';
-import { UserType } from '../enums/users.enum';
 import { _IDbUserImage, _IUserImage } from './images.interface';
 
 interface _IDbProfile extends Document {
@@ -18,7 +17,6 @@ interface _IDbUser extends Document {
   readonly password: string;
   profile: _IDbProfile;
   user_image: _IDbUserImage;
-  userType: UserType;
   createdAt: string;
   updatedAt: string;
   isVerified: boolean;
@@ -38,7 +36,6 @@ interface _ISanitizedProfile {
 
 interface _ISanitizedUser {
   _id: string;
-  userType: UserType;
   email: string;
   profile: _ISanitizedProfile;
   user_image: _IUserImage;
@@ -47,7 +44,13 @@ interface _ISanitizedUser {
 export interface _ISafeUser {
   _id: string;
   email: string;
-  userType: UserType;
+  isVerified: boolean;
+}
+
+export interface _IDbAccountVerification extends Document {
+  verification_token: string;
+  email: string;
+  expiresAt: Date;
 }
 
 export { _IDbProfile, _ISanitizedProfile, _IDbUser, _ISanitizedUser };

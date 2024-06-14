@@ -10,12 +10,15 @@ import { RefreshStrategy } from 'src/shared/jwt/refresh.jwt.strategy';
 import { LocalJwtAuthGuard } from 'src/shared/guards/local-jwt.guard';
 import { RefreshJwtAuthGuard } from 'src/shared/guards/refreshJwt.guard';
 import { JwtAuthGuard } from 'src/shared/guards/Jwt.guard';
+import { ConfigService } from '@nestjs/config';
+import { MailModule } from '../mail/mail.module';
 
 @Module({
-  imports: [UsersModule, JwtAuthModule, PassportModule],
+  imports: [UsersModule, JwtAuthModule, PassportModule, MailModule],
   controllers: [AuthController],
   providers: [
     AuthService,
+    ConfigService,
     JwtStrategy,
     LocalJwtStrategy,
     RefreshStrategy,

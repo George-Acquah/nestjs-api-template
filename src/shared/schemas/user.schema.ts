@@ -1,7 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Document } from 'mongoose';
 import * as bcrypt from 'bcrypt';
-import { UserType } from '../enums/users.enum';
 
 export type UserDocument = HydratedDocument<User>;
 
@@ -16,12 +15,6 @@ export class User extends Document {
 
   @Prop({ required: true })
   password: string;
-
-  @Prop({ required: true })
-  phone_number: string;
-
-  @Prop({ type: String, required: true, enum: UserType })
-  userType: UserType;
 
   @Prop({ default: false })
   isVerified: boolean;

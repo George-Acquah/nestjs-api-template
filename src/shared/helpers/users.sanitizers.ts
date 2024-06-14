@@ -1,5 +1,5 @@
 import { Document } from 'mongoose';
-import { _IDbUser, _ISafeUser } from '../interfaces/users.interface';
+import { _IDbUser } from '../interfaces/users.interface';
 
 export function sanitizeUserFn(user: Document): _ISafeUser {
   if (!user) {
@@ -22,6 +22,6 @@ export function sanitizeLoginUserFn(user: _IDbUser): _ISafeUser {
   return {
     _id: user._id.toString(),
     email: user.email,
-    userType: user.userType
+    isVerified: user.isVerified
   };
 }

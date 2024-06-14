@@ -1,11 +1,9 @@
-import { UserType } from '../enums/users.enum';
 import { JwtPayload } from 'jsonwebtoken';
 
 //We define our interface for our JWT payload
 //Basically, JWT will sign this payload and return a token to us
 interface _IPayload {
   user_id: string;
-  userType: UserType;
   sub: {
     email: string;
   };

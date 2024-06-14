@@ -9,7 +9,6 @@ export class MailController {
   async testMail() {
     console.log('EMAIL ON THE WAY');
     try {
-      await this.mailService.sendTest();
       return new ApiResponse(200, 'Your mail was delivered.', {});
     } catch (error) {
       console.log(error);
