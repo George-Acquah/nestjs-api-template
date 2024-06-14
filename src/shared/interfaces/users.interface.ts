@@ -48,7 +48,7 @@ export interface _ISafeUser {
 }
 
 export interface _IDbAccountVerification extends Document {
-  verification_token: string;
+  verificationToken: string;
   email: string;
   expiresAt: Date;
 }

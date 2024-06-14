@@ -12,10 +12,16 @@ export class AccountVerificationService {
   ) {}
 
   async findAccountVerificationRecord(token: string, email: string) {
-    return await this.accountVerificationModel.findOne({
-      verification_token: token,
-      email
-    });
+    try {
+      return await this.accountVerificationModel
+        .findOne({
+          verificationToken: token,
+          email
+        })
+        .exec();
+    } catch (error) {
+      throw error;
+    }
   }
 
   async deleteAccountVerificationRecord(_id: any) {

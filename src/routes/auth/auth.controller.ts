@@ -1,4 +1,12 @@
-import { Body, Controller, Post, Query, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  Query,
+  UseGuards,
+  UsePipes,
+  ValidationPipe
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { MailService } from '../mail/mail.service';
 import { CreateUserDto } from 'src/shared/dtos/users/create-users.dto';
@@ -8,6 +16,7 @@ import { ApiResponse } from 'src/shared/res/api.response';
 import { User } from 'src/shared/decorators/user.decorator';
 import { UsersService } from '../users/users.service';
 import { AccountVerificationService } from '../verify-account/verify-account.service';
+import { VerifyAccountQueryDto } from 'src/shared/dtos/users/verify-account.dto';
 // import { LocalJwtAuthGuard } from 'src/shared/guards/local-jwt.guard';
 
 @Controller('auth')
@@ -83,8 +92,10 @@ export class AuthController {
   }
 
   @Post('account/verify')
-  async verifyAccount(@Query() code: string, @Query() email: string) {
+  @UsePipes(new ValidationPipe({ transform: true, whitelist: true }))
+  async verifyAccount(@Query() query: VerifyAccountQueryDto) {
     try {
+      const { code, email } = query; // Destructure the validated query parameters
       const response = await this.authService.verifyAccount(code, email);
 
       return new ApiResponse(
@@ -95,7 +106,7 @@ export class AuthController {
     } catch (error) {
       return new ApiResponse(
         error.status ?? 400,
-        error.message ?? 'Something Bad Occured while creating your account',
+        error.message ?? 'Something bad occurred while verifying your account',
         {}
       );
     }
