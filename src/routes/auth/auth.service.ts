@@ -56,7 +56,7 @@ export class AuthService {
           token,
           email
         );
-      console.log('record: ', verificationRecord);
+
       if (!verificationRecord) {
         throw new NotFoundException(
           'Verification record not found or already used'

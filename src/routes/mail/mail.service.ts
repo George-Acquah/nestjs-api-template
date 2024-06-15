@@ -101,8 +101,11 @@ export class MailService {
   ) {
     try {
       // Construct the verification link
-      const verificationLink = `https://yourapp.com/verify?token=${verificationToken}`;
-
+      // Construct the verification link
+      const frontendBaseUrl = process.env.FRONTEND_BASE_URL;
+      const verificationLink = `${frontendBaseUrl}?token=${verificationToken}&email=${encodeURIComponent(
+        email
+      )}`;
       // Define the recipient's email address
       const recipient: _IMailRecipient = {
         email: email
